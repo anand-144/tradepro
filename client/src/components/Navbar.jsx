@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaSearch, FaUserCircle } from 'react-icons/fa';
+import { GiBullHorns } from "react-icons/gi";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -35,8 +36,12 @@ const Navbar = () => {
     >
       {/* Left: Logo */}
       <div className="text-xl font-bold tracking-wide">
-        <Link to="/">📊 StockSim</Link>
+        <Link to="/" className="flex items-center gap-2 text-white">
+          <GiBullHorns size={25} />
+          StockSim
+        </Link>
       </div>
+
 
       {/* Center: Search bar (hidden on auth pages) */}
       {!hideSearch && (
@@ -61,7 +66,7 @@ const Navbar = () => {
         </button>
 
         {dropdownOpen && (
-          <div className="absolute right-0 mt-2 bg-gray-600 text-black rounded shadow-md w-40 z-10 border-2 border-purple-600">
+          <div className="absolute right-0 mt-2 bg-gray-600 text-black rounded shadow-md w-40 z-10">
             {isAuthenticated ? (
               <>
                 <Link

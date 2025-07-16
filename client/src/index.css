@@ -1,5 +1,7 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+body {
+  font-family: 'Roboto Flex', sans-serif;
 }
+
