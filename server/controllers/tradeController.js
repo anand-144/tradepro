@@ -1,7 +1,7 @@
 const Portfolio = require('../models/Portfolio');
 const Transaction = require('../models/Transaction');
 const User = require('../models/User');
-const { getStockPrice } = require('../utils/alphaVantage');
+const { getStockPrice } = require('../utils/twelveData');
 
 const buyStock = async (req, res) => {
   const { symbol, quantity } = req.body;

@@ -13,35 +13,29 @@ const portfolioRoutes = require('./routes/portfolio');
 const transactionRoutes = require('./routes/transactions');
 const stockRoutes = require('./routes/stocks');
 const watchlistRoutes = require('./routes/watchlist');
+const currencyRoutes = require('./routes/currency');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
+
 app.use(cookieParser());
-
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 60,
-  message: '⚠️ Too many requests, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-const authLimiter = rateLimit({ windowMs: 10 * 60 * 1000, max: 10 });
-
-app.use(limiter);
 
 // Routes (will add soon)
 app.get("/", (req, res) => res.send("API is running..."));
 
-app.use('/api/auth', authLimiter , authRoutes);
+app.use('/api/auth',  authRoutes);
 app.use('/api/trade', tradeRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
-app.use('/api/stocks', limiter ,stockRoutes);
+app.use('/api/stocks', stockRoutes);
 app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/currency', currencyRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)

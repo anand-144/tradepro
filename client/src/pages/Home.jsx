@@ -1,76 +1,59 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import SplitText from '../animations/SplitText';
-import RippleGrid from '../animations/RippleGrid';
+import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
-  const handleAnimationComplete = () => {
-    console.log('All letters have animated!');
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white px-6 py-20 flex items-center justify-center overflow-hidden">
+    <div className="relative min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center px-4 overflow-hidden">
 
-      {/* --- Ripple Grid Background --- */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <RippleGrid
-          enableRainbow={true}
-          gridColor={"#191970"}
-          rippleIntensity={0.05}
-          gridSize={30}
-          gridThickness={11}
-          fadeDistance={0.40}
-          vignetteStrength={1.5}
-          glowIntensity={1.15}
-          opacity={0.5}
-          gridRotation={0}
-          mouseInteraction={true}
-          mouseInteractionRadius={10}
+      {/* 🌊 Animated SVG Wave Grid */}
+      <svg
+        className="absolute inset-0 -z-10 opacity-20 animate-pulse"
+        viewBox="0 0 1440 320"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill="#38bdf8"
+          fillOpacity="0.3"
+          d="M0,160L60,170.7C120,181,240,203,360,213.3C480,224,600,224,720,202.7C840,181,960,139,1080,117.3C1200,96,1320,96,1380,96L1440,96L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
         />
-      </div>
+      </svg>
 
-      {/* --- Hero Content --- */}
-      <div className="relative z-20 text-center max-w-2xl">
-        <span className="text-xs uppercase bg-blue-500 text-white px-3 py-1 rounded-full inline-block mb-4">
-          🔒 Secure & Fast
-        </span>
+      {/* 🧠 Title & CTA */}
+      <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+        📈 Welcome to StockSim
+      </h1>
+      <p className="text-lg md:text-xl mb-8 text-center max-w-xl">
+        Simulate real trading, grow your virtual portfolio, and learn stock market fundamentals.
+      </p>
 
-        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
-          Trade Stocks Seamlessly <br /> with{' '}
-          <SplitText
-            text="StockSim"
-            className="text-5xl font-extrabold text-white inline-block"
-            delay={100}
-            duration={0.6}
-            ease="power3.out"
-            splitType="chars"
-            from={{ opacity: 0, y: 40 }}
-            to={{ opacity: 1, y: 0 }}
-            threshold={0.1}
-            rootMargin="-100px"
-            textAlign="center"
-            onLetterAnimationComplete={handleAnimationComplete}
-          />
-        </h1>
-
-        <p className="text-gray-300 text-sm md:text-base mb-6">
-          Simulate trades, manage your virtual portfolio, and learn stock market strategies — all in one platform.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="flex gap-4 flex-wrap justify-center">
+        {user ? (
           <Link
-            to="/register"
-            className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-md text-white text-sm font-semibold"
+            to="/dashbaord"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded shadow transition"
           >
-            Get Started
+            Go to Dashboard
           </Link>
-          <Link
-            to="/dashboard"
-            className="bg-red-500 hover:bg-red-600 transition px-6 py-3 rounded-md text-sm text-white"
-          >
-            View Dashboard
-          </Link>
-        </div>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded shadow transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="bg-transparent border border-white hover:bg-white hover:text-slate-900 text-white font-medium px-6 py-3 rounded shadow transition"
+            >
+              Get Started
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,24 +1,40 @@
-
-import { Routes, Route } from 'react-router-dom'; // ✅ Add this line
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from '../pages/Home';
-import Dashboard from '../pages/Dashboard'
-import Login from '../pages/auth/Login'
-import Register from '../pages/auth/Register'
-import Navbar from '../components/Navbar';
+import Login from '../pages/Auth/Login';
+import Register from '../pages/Auth/Register';
+
+import Portfolio from '../pages/Dashboard/Portfolio';
+import Trade from '../pages/Dashboard/Trade';
+import Watchlist from '../pages/Dashboard/Watchlist';
+import Transactions from '../pages/Dashboard/Transactions';
+import StockDetails from '../pages/Dashboard/StockDetails';
+
+import ProtectedRoute from '../components/ProtectedRoute';
+import Dashbaord from '../pages/Dashboard/Dashbaord';
 
 const AppRoutes = () => {
   return (
-    <>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        {/* <Route path="*" element={<NotFound />} /> */}
-      </Routes>
-    </>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      {/* Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashbaord" element={<Dashbaord />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/trade" element={<Trade />} />
+        <Route path="/watchlist" element={<Watchlist />} />
+        <Route path="/transactions" element={<Transactions />} />
+        <Route path="/stocks/:symbol" element={<StockDetails />} />
+      </Route>
+
+      {/* Redirect unknown routes */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 

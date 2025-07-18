@@ -1,11 +1,17 @@
-import AppRoutes from "./routes/AppRoutes";
-
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes/AppRoutes';
+import Navbar from './components/Navbar'
+import { AuthProvider } from './context/AuthContext';
 
 const App = () => {
   return (
-    <div className="font-sans min-h-screen bg-gray-100">
-      <AppRoutes />
-    </div>
+    <AuthProvider>               {/* ✅ Auth context wrapper */}
+      <BrowserRouter>           {/* ✅ Router wrapper */}
+        <Navbar />              {/* ✅ Has access to useAuth() */}
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 

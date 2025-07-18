@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Portfolio = require('../models/Portfolio');
-const { getStockPrice } = require('../utils/alphaVantage');
+const { getStockPrice } = require('../utils/twelveData');
 
 const getPortfolio = async (req, res) => {
   try {
