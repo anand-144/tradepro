@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
 
 const Home = () => {
   const { user } = useAuth();
 
   return (
+    <>
+    <Navbar />
     <div className="relative min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center px-4 overflow-hidden">
 
       {/* 🌊 Animated SVG Wave Grid */}
@@ -33,7 +36,7 @@ const Home = () => {
       <div className="flex gap-4 flex-wrap justify-center">
         {user ? (
           <Link
-            to="/dashbaord"
+            to="/dashboard"
             className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded shadow transition"
           >
             Go to Dashboard
@@ -56,6 +59,7 @@ const Home = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

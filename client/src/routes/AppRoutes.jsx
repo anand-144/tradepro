@@ -12,7 +12,7 @@ import Transactions from '../pages/Dashboard/Transactions';
 import StockDetails from '../pages/Dashboard/StockDetails';
 
 import ProtectedRoute from '../components/ProtectedRoute';
-import Dashbaord from '../pages/Dashboard/Dashbaord';
+import Dashboard from '../pages/Dashboard/Dashbaord';
 
 const AppRoutes = () => {
   return (
@@ -24,7 +24,7 @@ const AppRoutes = () => {
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashbaord" element={<Dashbaord />} />
+        <Route path="/dashboard" element={<Dashboard />} /> 
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/trade" element={<Trade />} />
         <Route path="/watchlist" element={<Watchlist />} />

@@ -8,7 +8,6 @@ const App = () => {
   return (
     <AuthProvider>               {/* ✅ Auth context wrapper */}
       <BrowserRouter>           {/* ✅ Router wrapper */}
-        {/* <Navbar />              ✅ */}
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
