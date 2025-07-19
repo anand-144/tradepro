@@ -1,39 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { FiTrendingUp, FiTrendingDown, FiActivity, FiDollarSign } from 'react-icons/fi';
 import api from '../services/api';
-import { useCurrency } from '../context/CurrencyContext'; // 💱 custom hook for currency sync
+import { useCurrency } from '../context/CurrencyContext';
 
 const LivePrice = ({ symbol = 'AAPL', onData }) => {
   const [data, setData] = useState(null);
-  const [change, setChange] = useState(0);
+  const [apiChange, setApiChange] = useState(0); // renamed to avoid collision
   const [error, setError] = useState(null);
-  const { currency, setCurrency } = useCurrency();
-  const [convertedPrice, setConvertedPrice] = useState(null);
   const [conversionRate, setConversionRate] = useState(1);
-  const [availableCurrencies, setAvailableCurrencies] = useState(['USD']);
+  const [convertedData, setConvertedData] = useState(null);
+  const { currency } = useCurrency();
 
-  // ✅ Fetch currency list for dropdown
-  useEffect(() => {
-    const fetchCurrencies = async () => {
-      try {
-        const res = await api.get('/currency/list');
-        setAvailableCurrencies(res.data);
-      } catch (err) {
-        console.error('Failed to load currency list');
-      }
-    };
-    fetchCurrencies();
-  }, []);
-
-  // ✅ Fetch live stock price
+  // 🔁 Fetch live stock price
   useEffect(() => {
     const fetchLivePrice = async () => {
       try {
         const res = await api.get(`/stocks/${symbol}`);
-        const { price, previousClose } = res.data;
+        const price = res.data.price;
+        const previousClose = res.data.previousClose;
         setData(res.data);
-        setChange(price - previousClose);
-
-        // ✅ Pass data up to parent (Dashboard)
+        setApiChange(price - previousClose);
         if (onData) onData(res.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch live price');
@@ -41,16 +27,18 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
     };
 
     fetchLivePrice();
-    const interval = setInterval(fetchLivePrice, 15000); // every 15s
+    const interval = setInterval(fetchLivePrice, 15000); // Update every 15s
     return () => clearInterval(interval);
   }, [symbol]);
 
-  // ✅ Fetch currency conversion rate
+  // 💱 Convert to selected currency
   useEffect(() => {
-    const fetchConversion = async () => {
+    const convertCurrency = async () => {
+      if (!data?.price) return;
+
       if (currency === 'USD') {
         setConversionRate(1);
-        setConvertedPrice(data?.price);
+        setConvertedData(data);
         return;
       }
 
@@ -58,53 +46,122 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
         const res = await api.get(`/currency/${currency}`);
         const rate = res.data.rate;
         setConversionRate(rate);
-        setConvertedPrice(data?.price * rate);
+
+        const converted = {
+          ...data,
+          price: data.price * rate,
+          previousClose: data.previousClose * rate,
+          change: (data.price - data.previousClose) * rate,
+        };
+        setConvertedData(converted);
       } catch (err) {
-        console.error('Currency fetch error:', err.message);
+        console.error('Currency conversion error:', err.message);
         setConversionRate(1);
-        setConvertedPrice(data?.price);
+        setConvertedData(data);
       }
     };
 
-    if (data?.price) fetchConversion();
-  }, [currency, data?.price]);
+    if (data?.price) convertCurrency();
+  }, [currency, data]);
 
-  if (error) return <p className="text-red-500">{error}</p>;
-  if (!data) return <p className="text-white">Loading live price...</p>;
+  if (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6">
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
 
-  const changePercent = ((change / data.previousClose) * 100).toFixed(2);
-  const isPositive = change >= 0;
+  if (!convertedData) {
+    return (
+      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
+        <div className="animate-pulse space-y-2">
+          <div className="h-6 bg-slate-700 rounded w-48"></div>
+          <div className="h-8 bg-slate-700 rounded w-32"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const priceChange = convertedData.price - convertedData.previousClose;
+  const changePercent = ((priceChange / convertedData.previousClose) * 100).toFixed(2);
+  const isPositive = priceChange >= 0;
+  const TrendIcon = isPositive ? FiTrendingUp : FiTrendingDown;
 
   return (
-    <div className="bg-slate-800 text-white px-4 py-3 rounded shadow w-full max-w-4xl mx-auto mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h2 className="text-xl font-bold">{symbol}</h2>
-        <p className="text-lg">
-          ${data.price.toFixed(2)} USD
-          <span className={isPositive ? 'text-green-400 ml-2' : 'text-red-400 ml-2'}>
-            {isPositive ? '▲' : '▼'} {Math.abs(change).toFixed(2)} ({Math.abs(changePercent)}%)
-          </span>
-        </p>
-        {currency !== 'USD' && convertedPrice && (
-          <p className="text-sm text-slate-300">
-            ≈ {convertedPrice.toFixed(2)} {currency}
-          </p>
-        )}
+    <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-white mb-1">
+            {convertedData.symbol} Live Price
+          </h2>
+          <p className="text-slate-400">{convertedData.name || 'Company'}</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <FiActivity className="w-5 h-5 text-emerald-400" />
+          <span className="text-sm text-emerald-400 font-medium">LIVE</span>
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="currency" className="mr-2">Convert to:</label>
-        <select
-          id="currency"
-          value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
-          className="text-black px-2 py-1 rounded"
-        >
-          {availableCurrencies.map((cur) => (
-            <option key={cur} value={cur}>{cur}</option>
-          ))}
-        </select>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Current Price */}
+        <div className="md:col-span-2">
+          <div className="flex items-center space-x-3 mb-2">
+            <FiDollarSign className="w-6 h-6 text-slate-400" />
+            <span className="text-lg text-slate-400">Current Price ({currency})</span>
+          </div>
+          <div className="text-4xl font-bold text-white">
+            {convertedData.price.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </div>
+        </div>
+
+        {/* Change */}
+        <div>
+          <div className="flex items-center space-x-3 mb-2">
+            <TrendIcon className={`w-6 h-6 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`} />
+            <span className="text-lg text-slate-400">Change</span>
+          </div>
+          <div className={`text-2xl font-bold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+            {isPositive ? '+' : ''}{priceChange.toFixed(2)}
+          </div>
+          <div className={`text-lg ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+            ({isPositive ? '+' : ''}{changePercent}%)
+          </div>
+        </div>
+
+        {/* Previous Close / Volume */}
+        <div>
+          <div className="space-y-3">
+            <div>
+              <span className="text-slate-400 text-sm">Previous Close</span>
+              <div className="text-xl font-semibold text-white">
+                {convertedData.previousClose.toFixed(2)}
+              </div>
+            </div>
+            <div>
+              <span className="text-slate-400 text-sm">Volume</span>
+              <div className="text-lg font-semibold text-white">
+                {convertedData.volume?.toLocaleString() || 'N/A'}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Market Cap */}
+      {convertedData.marketCap && (
+        <div className="mt-6 pt-6 border-t border-slate-700/50">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-400">Market Cap</span>
+            <span className="text-xl font-semibold text-white">
+              {convertedData.marketCap}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

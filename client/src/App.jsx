@@ -8,7 +8,7 @@ const App = () => {
   return (
     <AuthProvider>               {/* ✅ Auth context wrapper */}
       <BrowserRouter>           {/* ✅ Router wrapper */}
-        <Navbar />              {/* ✅ Has access to useAuth() */}
+        {/* <Navbar />              ✅ */}
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
