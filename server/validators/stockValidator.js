@@ -3,9 +3,7 @@ const { param } = require('express-validator');
 const validateStockSymbol = [
   param('symbol')
     .trim()
-    .toUpperCase()
-    .isAlphanumeric()
-    .isLength({ min: 1, max: 10 })
+    .matches(/^[A-Z0-9\.\-]{1,20}$/i)
     .withMessage('Invalid stock symbol format'),
 ];
 

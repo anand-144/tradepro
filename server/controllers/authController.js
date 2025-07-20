@@ -44,6 +44,14 @@ const logout = (req, res) => {
   res.json({ message: 'Logged out successfully' });
 };
 
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password'); // exclude password
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch user' });
+  }
+};
 
-
-module.exports = { register, login , logout  };
+module.exports = { register, login , logout , getUser };

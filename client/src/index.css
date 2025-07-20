@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+.loader {
+  border-top-color: #10b981; /* emerald-500 */
+  animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

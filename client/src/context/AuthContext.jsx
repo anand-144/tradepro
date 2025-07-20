@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, registerUser, logoutUser } from '../services/auth';
+import api from '../services/api';
+
 
 const AuthContext = createContext();
 
@@ -60,14 +62,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const value = {
-    user,
-    accessToken,
-    login,
-    register,
-    logout,
-    isAuthenticated: !!user && !!accessToken
-  };
+const refreshUser = async () => {
+  try {
+    const res = await api.get('/auth/user'); // ✅ Fetch latest user data
+    setUser(res.data);
+  } catch (err) {
+    console.error('Failed to refresh user:', err);
+  }
+};
+
+
+
+const value = {
+  user,
+  accessToken,
+  login,
+  register,
+  logout,
+  refreshUser, // ✅ <-- Add this line
+  isAuthenticated: !!user && !!accessToken,
+};
+
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
