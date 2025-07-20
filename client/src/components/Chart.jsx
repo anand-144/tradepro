@@ -33,7 +33,14 @@ const Chart = ({ symbol = 'AAPL' }) => {
         setIsMarketClosed(res.data.marketClosed || false);
         setError(null);
       } catch (err) {
-        setError(err.response?.data?.message || 'Error fetching stock price');
+        const msg = err.response?.data?.message?.toLowerCase() || '';
+        const isApiLimit = err.response?.status === 429 || msg.includes('limit');
+        if (isApiLimit) {
+          setData([]);
+          setError(null);
+        } else {
+          setError(msg || 'Error fetching stock price');
+        }
       } finally {
         setLoading(false);
       }
@@ -54,7 +61,6 @@ const Chart = ({ symbol = 'AAPL' }) => {
     convert();
   }, [currency]);
 
-  // ⏳ Slice historical candles based on selected timeframe (latest N days)
   const slicedData = (() => {
     const days = timeframes.find(tf => tf.value === timeframe)?.days || 30;
     return data.slice(-days);
@@ -157,92 +163,95 @@ const Chart = ({ symbol = 'AAPL' }) => {
   }
 
   return (
-    <div
-      className={`bg-gradient-to-br from-slate-800/60 to-slate-900/60 rounded-xl border border-slate-700/50 shadow-xl transition-all duration-300 ${
-        isFullscreen ? 'fixed inset-4 z-50' : 'relative'
-      }`}
-    >
-      {isMarketClosed && (
-        <div className="bg-yellow-500/10 text-yellow-400 border border-yellow-400/20 px-4 py-2 text-sm rounded-t-lg text-center">
-          Market Closed — Data may not reflect real-time prices.
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-slate-700/50">
-        <div className="flex items-center space-x-3 mb-4 sm:mb-0">
-          <FiTrendingUp className="w-6 h-6 text-emerald-400" />
-          <h2 className="text-xl font-bold text-white">{symbol} Chart</h2>
-          <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-medium">{currency}</span>
-        </div>
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-1 bg-slate-700/40 rounded p-1">
-            {timeframes.map(tf => (
-              <button
-                key={tf.value}
-                onClick={() => setTimeframe(tf.value)}
-                className={`px-2 py-1 text-xs rounded ${
-                  timeframe === tf.value
-                    ? 'bg-emerald-500 text-white'
-                    : 'text-slate-400 hover:text-emerald-400'
-                }`}
-              >
-                {tf.label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-2 rounded-lg bg-slate-700/40 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400"
-            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          >
-            <FiMaximize2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Chart Canvas */}
-      <div className="overflow-x-auto px-4 pb-4">
-        <div className="w-full max-w-[900px] mx-auto">
-          <CanvasJSStockChart options={chartOptions} />
-        </div>
-      </div>
-
-      {/* Summary Stats */}
-      <div className="px-4 pb-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {formattedData.length > 0 && (() => {
-            const latest = formattedData.at(-1);
-            const [o, h, l, c] = latest.y;
-            return (
-              <>
-                <div className="bg-slate-700/30 p-3 rounded text-center">
-                  <div className="text-slate-400 text-sm">Open</div>
-                  <div className="text-white font-semibold">{o}</div>
-                </div>
-                <div className="bg-emerald-500/10 p-3 rounded text-center">
-                  <div className="text-slate-400 text-sm">High</div>
-                  <div className="text-emerald-400 font-semibold">{h}</div>
-                </div>
-                <div className="bg-red-500/10 p-3 rounded text-center">
-                  <div className="text-slate-400 text-sm">Low</div>
-                  <div className="text-red-400 font-semibold">{l}</div>
-                </div>
-                <div className="bg-slate-700/30 p-3 rounded text-center">
-                  <div className="text-slate-400 text-sm">Close</div>
-                  <div className="text-white font-semibold">{c}</div>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
-
-      {/* Fullscreen Exit Overlay */}
+    <>
       {isFullscreen && (
-        <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setIsFullscreen(false)} />
+        <div
+          className="fixed inset-0 bg-black/70 z-[9990]"
+          onClick={() => setIsFullscreen(false)}
+        />
       )}
-    </div>
+      <div
+        className={`flex flex-col bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-slate-700/50 shadow-xl transition-all duration-300 ${
+          isFullscreen ? 'fixed inset-4 z-[9999]' : 'relative'
+        }`}
+      >
+        {isMarketClosed && (
+          <div className="bg-yellow-500/10 text-yellow-400 border border-yellow-400/20 px-4 py-2 text-sm rounded-t-lg text-center">
+            Market Closed — Data may not reflect real-time prices.
+          </div>
+        )}
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-slate-700/50">
+          <div className="flex items-center space-x-3 mb-4 sm:mb-0">
+            <FiTrendingUp className="w-6 h-6 text-emerald-400" />
+            <h2 className="text-xl font-bold text-white">{symbol} Chart</h2>
+            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-medium">{currency}</span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-1 bg-slate-700/40 rounded p-1">
+              {timeframes.map(tf => (
+                <button
+                  key={tf.value}
+                  onClick={() => setTimeframe(tf.value)}
+                  className={`px-2 py-1 text-xs rounded ${
+                    timeframe === tf.value
+                      ? 'bg-emerald-500 text-white'
+                      : 'text-slate-400 hover:text-emerald-400'
+                  }`}
+                >
+                  {tf.label}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="p-2 rounded-lg bg-slate-700/40 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400"
+              title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            >
+              <FiMaximize2 className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Chart Canvas */}
+        <div className="overflow-x-auto px-4 pb-4">
+          <div className="w-full max-w-[900px] mx-auto">
+            <CanvasJSStockChart options={chartOptions} />
+          </div>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="px-4 pb-6 mt-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {formattedData.length > 0 && (() => {
+              const latest = formattedData.at(-1);
+              const [o, h, l, c] = latest.y;
+              return (
+                <>
+                  <div className="bg-slate-700/30 p-3 rounded text-center">
+                    <div className="text-slate-400 text-sm">Open</div>
+                    <div className="text-white font-semibold">{o}</div>
+                  </div>
+                  <div className="bg-emerald-500/10 p-3 rounded text-center">
+                    <div className="text-slate-400 text-sm">High</div>
+                    <div className="text-emerald-400 font-semibold">{h}</div>
+                  </div>
+                  <div className="bg-red-500/10 p-3 rounded text-center">
+                    <div className="text-slate-400 text-sm">Low</div>
+                    <div className="text-red-400 font-semibold">{l}</div>
+                  </div>
+                  <div className="bg-slate-700/30 p-3 rounded text-center">
+                    <div className="text-slate-400 text-sm">Close</div>
+                    <div className="text-white font-semibold">{c}</div>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -10,6 +10,7 @@ import Chart from '../../components/Chart';
 import StockCardGrid from '../../components/StockCardGrid';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import Loader from '../../components/Loader';
 
 const Dashboard = () => {
   const [symbol, setSymbol] = useState('AAPL');
@@ -20,6 +21,17 @@ const Dashboard = () => {
   const [demoTradesCount, setDemoTradesCount] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { user, refreshUser } = useAuth();
+
+  useEffect(() => {
+    // simulate loading or wait for auth context to resolve
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500); // Adjust or remove this if AuthContext has its own loading
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <Loader />;
 
   useEffect(() => {
     refreshUser();

@@ -5,11 +5,13 @@ import api from '../../services/api';
 import LivePrice from '../../components/LivePrice';
 import Chart from '../../components/Chart';
 import { FiTrash2 } from 'react-icons/fi';
+import Loader from '../../components/Loader'; // ✅ Import Loader
 
 const Watchlist = () => {
   const { accessToken } = useAuth();
   const [symbols, setSymbols] = useState([]);
   const [selectedSymbol, setSelectedSymbol] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ loading state
 
   const fetchWatchlist = async () => {
     try {
@@ -22,6 +24,8 @@ const Watchlist = () => {
       }
     } catch (err) {
       console.error('Failed to fetch watchlist');
+    } finally {
+      setLoading(false); // ✅ Stop loader
     }
   };
 
@@ -43,21 +47,22 @@ const Watchlist = () => {
     fetchWatchlist();
   }, []);
 
+  if (loading) return <Loader />; // ✅ loader during initial fetch
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <MegaMenu />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h1 className="text-3xl font-bold text-emerald-400 mb-6">📌 Your Watchlist</h1>
 
         {symbols.length === 0 ? (
           <p className="text-slate-400">Your watchlist is empty. Add stocks from the dashboard.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
             {symbols.map((symbol) => (
               <div
                 key={symbol}
-                className={`p-2 border border-slate-700 rounded-xl bg-slate-800 shadow hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer ${
+                className={`p-3 border border-slate-700 rounded-xl bg-slate-800 shadow hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer ${
                   selectedSymbol === symbol ? 'ring-2 ring-emerald-400' : ''
                 }`}
               >

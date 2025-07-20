@@ -5,13 +5,12 @@ import { useCurrency } from '../context/CurrencyContext';
 
 const LivePrice = ({ symbol = 'AAPL', onData }) => {
   const [data, setData] = useState(null);
-  const [apiChange, setApiChange] = useState(0); // renamed to avoid collision
+  const [apiChange, setApiChange] = useState(0);
   const [error, setError] = useState(null);
   const [conversionRate, setConversionRate] = useState(1);
   const [convertedData, setConvertedData] = useState(null);
   const { currency } = useCurrency();
 
-  // 🔁 Fetch live stock price
   useEffect(() => {
     const fetchLivePrice = async () => {
       try {
@@ -21,17 +20,24 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
         setData(res.data);
         setApiChange(price - previousClose);
         if (onData) onData(res.data);
+        setError(null);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch live price');
+        const msg = err.response?.data?.message?.toLowerCase() || '';
+        const isApiLimit = err.response?.status === 429 || msg.includes('limit');
+        if (isApiLimit) {
+          setData(null);
+          setError(null);
+        } else {
+          setError(msg || 'Failed to fetch live price');
+        }
       }
     };
 
     fetchLivePrice();
-    const interval = setInterval(fetchLivePrice, 15000); // Update every 15s
+    const interval = setInterval(fetchLivePrice, 15000);
     return () => clearInterval(interval);
   }, [symbol]);
 
-  // 💱 Convert to selected currency
   useEffect(() => {
     const convertCurrency = async () => {
       if (!data?.price) return;
@@ -54,23 +60,13 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
           change: (data.price - data.previousClose) * rate,
         };
         setConvertedData(converted);
-      } catch (err) {
-        console.error('Currency conversion error:', err.message);
-        setConversionRate(1);
+      } catch {
         setConvertedData(data);
       }
     };
 
     if (data?.price) convertCurrency();
   }, [currency, data]);
-
-  if (error) {
-    return (
-      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6">
-        <p className="text-red-400">{error}</p>
-      </div>
-    );
-  }
 
   if (!convertedData) {
     return (
@@ -104,7 +100,6 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Current Price */}
         <div className="md:col-span-2">
           <div className="flex items-center space-x-3 mb-2">
             <FiDollarSign className="w-6 h-6 text-slate-400" />
@@ -118,7 +113,6 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
           </div>
         </div>
 
-        {/* Change */}
         <div>
           <div className="flex items-center space-x-3 mb-2">
             <TrendIcon className={`w-6 h-6 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`} />
@@ -132,7 +126,6 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
           </div>
         </div>
 
-        {/* Previous Close / Volume */}
         <div>
           <div className="space-y-3">
             <div>
@@ -151,7 +144,6 @@ const LivePrice = ({ symbol = 'AAPL', onData }) => {
         </div>
       </div>
 
-      {/* Market Cap */}
       {convertedData.marketCap && (
         <div className="mt-6 pt-6 border-t border-slate-700/50">
           <div className="flex justify-between items-center">

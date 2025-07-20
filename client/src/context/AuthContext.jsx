@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, registerUser, logoutUser } from '../services/auth';
 import api from '../services/api';
 
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -15,6 +14,8 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem('accessToken') || null;
   });
 
+  const [loading, setLoading] = useState(true); // ✅ loader state
+
   // ✅ Sync state to localStorage
   useEffect(() => {
     if (user && accessToken) {
@@ -26,7 +27,24 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user, accessToken]);
 
-  // ✅ Login
+  // ✅ Initial user refresh on load
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (accessToken) {
+        try {
+          const res = await api.get('/auth/user');
+          setUser(res.data);
+        } catch (err) {
+          console.error('❌ Failed to refresh user:', err);
+          setUser(null);
+          setAccessToken(null);
+        }
+      }
+      setLoading(false); // ✅ Done loading
+    };
+    fetchUser();
+  }, []);
+
   const login = async (email, password) => {
     try {
       const { token, user } = await loginUser(email, password);
@@ -38,7 +56,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Register
   const register = async (name, email, password) => {
     try {
       await registerUser(name, email, password);
@@ -48,7 +65,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Logout
   const logout = async () => {
     try {
       await logoutUser();
@@ -62,27 +78,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-const refreshUser = async () => {
-  try {
-    const res = await api.get('/auth/user'); // ✅ Fetch latest user data
-    setUser(res.data);
-  } catch (err) {
-    console.error('Failed to refresh user:', err);
-  }
-};
+  const refreshUser = async () => {
+    try {
+      const res = await api.get('/auth/user');
+      setUser(res.data);
+    } catch (err) {
+      console.error('Failed to refresh user:', err);
+    }
+  };
 
-
-
-const value = {
-  user,
-  accessToken,
-  login,
-  register,
-  logout,
-  refreshUser, // ✅ <-- Add this line
-  isAuthenticated: !!user && !!accessToken,
-};
-
+  const value = {
+    user,
+    accessToken,
+    login,
+    register,
+    logout,
+    refreshUser,
+    isAuthenticated: !!user && !!accessToken,
+    loading, // ✅ expose this
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

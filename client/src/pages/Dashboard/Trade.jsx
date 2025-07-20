@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../services/api';
 import { FiDollarSign, FiHash, FiRepeat } from 'react-icons/fi';
+import Loader from '../../components/Loader'; // ✅ Import Loader
 
 const Trade = () => {
   const { accessToken } = useAuth();
@@ -41,6 +42,8 @@ const Trade = () => {
       setLoading(false);
     }
   };
+
+  if (loading) return <Loader />; // ✅ Show loader during trade
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -121,4 +124,3 @@ const Trade = () => {
 };
 
 export default Trade;
-  
