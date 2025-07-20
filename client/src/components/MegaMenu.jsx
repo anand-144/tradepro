@@ -35,7 +35,7 @@ const MegaMenu = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to={"/"}>
+          <Link to={"/dashboard"}>
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center">
                 <FiTrendingUp className="w-5 h-5 text-white" />
