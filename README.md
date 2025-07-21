@@ -47,7 +47,6 @@
 - 🔎 Transactions history with filtering & search
 - ⭐ Watchlist support
 - 🌐 Multi-currency conversion (USD, INR, EUR, etc.)
-- 📥 Export portfolio to CSV
 - ⚡ Caching and refresh control to optimize API usage
 
 ---
