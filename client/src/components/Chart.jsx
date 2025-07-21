@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import CanvasJSReact from '@canvasjs/react-stockcharts';
+import CanvasJSReact from '@canvasjs/react-stockcharts'; // ✅
+const CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
 import { FiActivity, FiTrendingUp, FiMaximize2 } from 'react-icons/fi';
 import api from '../services/api';
 import { useCurrency } from '../context/CurrencyContext';
@@ -13,8 +14,6 @@ const Chart = ({ symbol = 'AAPL' }) => {
   const [timeframe, setTimeframe] = useState('1M');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMarketClosed, setIsMarketClosed] = useState(false);
-
-  const CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
 
   const timeframes = [
     { label: '1D', value: '1D', days: 1 },
@@ -181,7 +180,6 @@ const Chart = ({ symbol = 'AAPL' }) => {
           </div>
         )}
 
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-slate-700/50">
           <div className="flex items-center space-x-3 mb-4 sm:mb-0">
             <FiTrendingUp className="w-6 h-6 text-emerald-400" />
@@ -214,14 +212,12 @@ const Chart = ({ symbol = 'AAPL' }) => {
           </div>
         </div>
 
-        {/* Chart Canvas */}
         <div className="overflow-x-auto px-4 pb-4">
           <div className="w-full max-w-[900px] mx-auto">
             <CanvasJSStockChart options={chartOptions} />
           </div>
         </div>
 
-        {/* Summary Stats */}
         <div className="px-4 pb-6 mt-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {formattedData.length > 0 && (() => {
