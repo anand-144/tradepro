@@ -5,13 +5,15 @@ import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 
 import ProtectedRoute from '../components/ProtectedRoute';
+import Portfolio from '../pages/Portfolio';
+import Trade from '../pages/Trade';
+import Watchlist from '../pages/Watchlist';
+import Transactions from '../pages/Transactions';
+import StockDetails from '../pages/StockDetails';
+import Dashboard from '../pages/Dashbaord';
 
-import Trade from '../pages/dashboard/Trade'
-import Watchlist from '../pages/dashboard/Watchlist'
-import Transactions from '../pages/dashboard/Transactions'
-import StockDetails from '../pages/dashboard/StockDetails';
-import Dashboard from '../pages/dashboard/Dashbaord'
-import Portfolio from '../pages/dashboard/Portfolio';
+
+
 
 const AppRoutes = () => {
   return (

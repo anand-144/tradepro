@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import MegaMenu from '../../components/MegaMenu';
-import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
+import MegaMenu from '../components/MegaMenu';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import toast, { Toaster } from 'react-hot-toast';
 import {
   BarChart,

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
-import { useCurrency } from '../../context/CurrencyContext';
-import MegaMenu from '../../components/MegaMenu';
+import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { useCurrency } from '../context/CurrencyContext';
+import MegaMenu from '../components/MegaMenu';
 import toast, { Toaster } from 'react-hot-toast';
 import { FiArrowUpRight, FiArrowDownRight } from 'react-icons/fi';
 import { Sparklines, SparklinesLine } from 'react-sparklines';

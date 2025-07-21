@@ -4,13 +4,13 @@ import {
 } from 'react-icons/fi';
 import { useSpring, animated } from 'react-spring';
 import toast, { Toaster } from 'react-hot-toast';
-import MegaMenu from '../../components/MegaMenu';
-import LivePrice from '../../components/LivePrice';
-import Chart from '../../components/Chart';
-import StockCardGrid from '../../components/StockCardGrid';
-import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
-import Loader from '../../components/Loader';
+import MegaMenu from '../components/MegaMenu';
+import LivePrice from '../components/LivePrice';
+import Chart from '../components/Chart';
+import StockCardGrid from '../components/StockCardGrid';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
+import Loader from '../components/Loader';
 
 const Dashboard = () => {
   const { user, refreshUser, loading } = useAuth();

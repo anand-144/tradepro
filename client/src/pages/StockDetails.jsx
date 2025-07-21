@@ -1,6 +1,6 @@
 import React from 'react';
-import LivePrice from '../../components/LivePrice';
-import Chart from '../../components/Chart';
+import LivePrice from '../components/LivePrice';
+import Chart from '../components/Chart';
 
 const StockDetails = () => {
   const symbol = 'AAPL'; // you can replace this with a route param

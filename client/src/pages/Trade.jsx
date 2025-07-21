@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MegaMenu from '../../components/MegaMenu';
-import { useAuth } from '../../context/AuthContext';
+import MegaMenu from '../components/MegaMenu';
+import { useAuth } from '../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
-import api from '../../services/api';
+import api from '../services/api';
 import { FiDollarSign, FiHash, FiRepeat } from 'react-icons/fi';
-import Loader from '../../components/Loader'; // ✅ Import Loader
+import Loader from '../components/Loader'; // ✅ Import Loader
 
 const Trade = () => {
   const { accessToken } = useAuth();

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import MegaMenu from '../../components/MegaMenu';
-import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
-import LivePrice from '../../components/LivePrice';
-import Chart from '../../components/Chart';
+import MegaMenu from '../components/MegaMenu';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
+import LivePrice from '../components/LivePrice';
+import Chart from '../components/Chart';
 import { FiTrash2 } from 'react-icons/fi';
-import Loader from '../../components/Loader'; // ✅ Import Loader
+import Loader from '../components/Loader'; // ✅ Import Loader
 
 const Watchlist = () => {
   const { accessToken } = useAuth();
