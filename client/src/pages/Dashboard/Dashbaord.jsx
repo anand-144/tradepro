@@ -13,92 +13,18 @@ import api from '../../services/api';
 import Loader from '../../components/Loader';
 
 const Dashboard = () => {
+  const { user, refreshUser, loading } = useAuth();
+
   const [symbol, setSymbol] = useState('AAPL');
   const [input, setInput] = useState('');
   const [liveData, setLiveData] = useState(null);
   const [watchlist, setWatchlist] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [demoTradesCount, setDemoTradesCount] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const { user, refreshUser } = useAuth();
-
-  useEffect(() => {
-    // simulate loading or wait for auth context to resolve
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500); // Adjust or remove this if AuthContext has its own loading
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) return <Loader />;
 
   useEffect(() => {
     refreshUser();
   }, []);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (input.trim()) {
-      setSymbol(input.trim().toUpperCase());
-      setInput('');
-    }
-  };
-
-  const handleAddToWatchlist = async (stockSymbol) => {
-    const finalSymbol = typeof stockSymbol === 'string' ? stockSymbol.toUpperCase() : symbol;
-
-    if (watchlist.includes(finalSymbol)) {
-      toast('Already in your watchlist');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const res = await api.post('/watchlist/add', { symbol: finalSymbol });
-
-      // ✅ Handle flexible response
-      if (res.data.symbols) {
-        const updatedList = res.data.symbols.map((s) => s.toUpperCase());
-        setWatchlist(updatedList);
-      } else {
-        setWatchlist((prev) => [...new Set([...prev, finalSymbol])]);
-      }
-
-      toast.success(`✨ ${finalSymbol} added to watchlist`);
-    } catch (err) {
-      console.error('Add to watchlist failed:', err);
-      toast.error(err.response?.data?.message || 'Failed to add to watchlist');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTrade = async () => {
-    try {
-      setLoading(true);
-      await api.post('/trade/buy', { symbol, quantity: 1 });
-      await refreshUser();
-      toast.success(`🎯 Bought 1 share of ${symbol}`);
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Trade failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSellTrade = async () => {
-    try {
-      setLoading(true);
-      await api.post('/trade/sell', { symbol, quantity: 1 });
-      await refreshUser();
-      toast.success(`💸 Sold 1 share of ${symbol}`);
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Sell failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const fetchWatchlist = async () => {
@@ -132,6 +58,57 @@ const Dashboard = () => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (input.trim()) {
+      setSymbol(input.trim().toUpperCase());
+      setInput('');
+    }
+  };
+
+  const handleAddToWatchlist = async (stockSymbol) => {
+    const finalSymbol = typeof stockSymbol === 'string' ? stockSymbol.toUpperCase() : symbol;
+
+    if (watchlist.includes(finalSymbol)) {
+      toast('Already in your watchlist');
+      return;
+    }
+
+    try {
+      const res = await api.post('/watchlist/add', { symbol: finalSymbol });
+      if (res.data.symbols) {
+        const updatedList = res.data.symbols.map((s) => s.toUpperCase());
+        setWatchlist(updatedList);
+      } else {
+        setWatchlist((prev) => [...new Set([...prev, finalSymbol])]);
+      }
+      toast.success(`✨ ${finalSymbol} added to watchlist`);
+    } catch (err) {
+      console.error('Add to watchlist failed:', err);
+      toast.error(err.response?.data?.message || 'Failed to add to watchlist');
+    }
+  };
+
+  const handleTrade = async () => {
+    try {
+      await api.post('/trade/buy', { symbol, quantity: 1 });
+      await refreshUser();
+      toast.success(`🎯 Bought 1 share of ${symbol}`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Trade failed');
+    }
+  };
+
+  const handleSellTrade = async () => {
+    try {
+      await api.post('/trade/sell', { symbol, quantity: 1 });
+      await refreshUser();
+      toast.success(`💸 Sold 1 share of ${symbol}`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Sell failed');
+    }
+  };
 
   const animatedBalance = useSpring({
     val: user?.balance || 0,
@@ -174,6 +151,8 @@ const Dashboard = () => {
     },
   ].filter(Boolean);
 
+  if (loading) return <Loader />;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <Toaster />
@@ -215,24 +194,21 @@ const Dashboard = () => {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => handleAddToWatchlist(symbol)}
-                disabled={loading}
-                className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-3 rounded-lg"
+                className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg"
               >
                 <FiStar className="w-4 h-4" />
                 <span>Add to Watchlist</span>
               </button>
               <button
                 onClick={handleTrade}
-                disabled={loading}
-                className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-black px-4 py-3 rounded-lg"
+                className="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-black px-4 py-3 rounded-lg"
               >
                 <FiShoppingCart className="w-4 h-4" />
                 <span>Buy 1 Share</span>
               </button>
               <button
                 onClick={handleSellTrade}
-                disabled={loading}
-                className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white px-4 py-3 rounded-lg"
+                className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg"
               >
                 <FiTrendingDown className="w-4 h-4" />
                 <span>Sell 1 Share</span>
@@ -282,7 +258,7 @@ const Dashboard = () => {
               <div className="text-2xl font-bold text-blue-400">{watchlist.length}</div>
             </div>
             <div className="text-center p-4 bg-slate-700/30 rounded-lg">
-              <div className="text-slate-400 text-sm mb-2">Demo Trades</div>
+              <div className="text-slate-400 text-sm mb-2">Trades</div>
               <div className="text-2xl font-bold text-amber-400">{demoTradesCount}</div>
             </div>
           </div>
