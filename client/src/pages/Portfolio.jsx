@@ -6,7 +6,6 @@ import MegaMenu from '../components/MegaMenu';
 import toast, { Toaster } from 'react-hot-toast';
 import { FiArrowUpRight, FiArrowDownRight } from 'react-icons/fi';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
-import download from 'downloadjs';
 
 const Portfolio = () => {
   const { accessToken } = useAuth();
@@ -31,7 +30,7 @@ const Portfolio = () => {
         avgPrice: convertCurrency(h.avgPrice),
         currentPrice: convertCurrency(h.currentPrice),
         gainLossAbsolute: convertCurrency(h.gainLossAbsolute),
-        trend: Array.from({ length: 12 }, () => h.currentPrice + Math.random() * 2 - 1), // Mock trend
+        trend: Array.from({ length: 12 }, () => h.currentPrice + Math.random() * 2 - 1),
       }));
 
       setHoldings(convertedHoldings);
@@ -44,17 +43,6 @@ const Portfolio = () => {
       setLoading(false);
     }
   };
-
-const exportCSV = () => {
-  const csv = holdings.map(
-    (h) =>
-      `${h.symbol},${h.quantity},${h.avgPrice},${h.currentPrice},${h.gainLossAbsolute},${h.gainLossPercent}`
-  );
-  const csvContent =
-    'Symbol,Qty,Avg Price,Current Price,Gain,Gain%\n' + csv.join('\n');
-
-  download(csvContent, 'portfolio.csv', 'text/csv');
-};
 
   useEffect(() => {
     fetchPortfolio();
@@ -89,12 +77,6 @@ const exportCSV = () => {
               <option value="CAD">CAD</option>
               <option value="AUD">AUD</option>
             </select>
-            <button
-              onClick={exportCSV}
-              className="bg-slate-700 text-white px-3 py-1 rounded hover:bg-slate-600"
-            >
-              Export CSV
-            </button>
             <button
               onClick={fetchPortfolio}
               className="bg-slate-700 text-white px-3 py-1 rounded hover:bg-slate-600"
