@@ -2,17 +2,17 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from '../pages/Home';
-import Login from '../pages/Auth/Login';
-import Register from '../pages/Auth/Register';
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
 
-import Portfolio from '../pages/Dashboard/Portfolio';
-import Trade from '../pages/Dashboard/Trade';
-import Watchlist from '../pages/Dashboard/Watchlist';
-import Transactions from '../pages/Dashboard/Transactions';
-import StockDetails from '../pages/Dashboard/StockDetails';
+import Portfolio from '../pages/dashboard/Portfolio';
+import Trade from '../pages/dashboard/Trade';
+import Watchlist from '../pages/dashboard/Watchlist';
+import Transactions from '../pages/dashboard/Transactions';
+import StockDetails from '../pages/dashboard/StockDetails';
 
 import ProtectedRoute from '../components/ProtectedRoute';
-import Dashboard from '../pages/Dashboard/Dashbaord';
+import Dashboard from '../pages/dashboard/Dashbaord';
 
 const AppRoutes = () => {
   return (
