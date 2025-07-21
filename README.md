@@ -34,7 +34,7 @@
 
 ## 📸 Screenshot
 
-![Dashboard](https://ibb.co/PGh1jQb1)
+![Dashboard](https://jmp.sh/s/X48AOfA8e0HzKRvZacmQ)
 
 ---
 
