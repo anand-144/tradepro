@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Loader from '../components/Loader';
 import { FiTrendingUp } from 'react-icons/fi';
-import HeroBg from '../assets/HeroBg.jpeg'
+
 
 const Home = () => {
   const { user, loading } = useAuth();
@@ -17,7 +17,7 @@ const Home = () => {
       <div className="relative min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center px-4 overflow-hidden">
 
         <img
-          src={HeroBg}
+          src="../../public/HeroBg.jpeg"
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover opacity-6 z-0"
         />
