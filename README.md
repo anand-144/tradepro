@@ -34,7 +34,8 @@
 
 ## 📸 Screenshot
 
-![Dashboard](https://i.ibb.co/PGh1jQb/1.png)
+![Dashboard Screenshot](https://raw.githubusercontent.com/anand-144/tradepro/main/public/Dashboard.png)
+
 
 ---
 
