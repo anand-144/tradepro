@@ -6,7 +6,7 @@ import MegaMenu from '../components/MegaMenu';
 import toast, { Toaster } from 'react-hot-toast';
 import { FiArrowUpRight, FiArrowDownRight } from 'react-icons/fi';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
-import { saveAs } from 'file-saver';
+import download from 'downloadjs';
 
 const Portfolio = () => {
   const { accessToken } = useAuth();
@@ -45,16 +45,16 @@ const Portfolio = () => {
     }
   };
 
-  const exportCSV = () => {
-    const csv = holdings.map(
-      (h) =>
-        `${h.symbol},${h.quantity},${h.avgPrice},${h.currentPrice},${h.gainLossAbsolute},${h.gainLossPercent}`
-    );
-    const csvContent =
-      'Symbol,Qty,Avg Price,Current Price,Gain,Gain%\n' + csv.join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'portfolio.csv');
-  };
+const exportCSV = () => {
+  const csv = holdings.map(
+    (h) =>
+      `${h.symbol},${h.quantity},${h.avgPrice},${h.currentPrice},${h.gainLossAbsolute},${h.gainLossPercent}`
+  );
+  const csvContent =
+    'Symbol,Qty,Avg Price,Current Price,Gain,Gain%\n' + csv.join('\n');
+
+  download(csvContent, 'portfolio.csv', 'text/csv');
+};
 
   useEffect(() => {
     fetchPortfolio();
