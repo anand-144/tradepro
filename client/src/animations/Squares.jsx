@@ -25,12 +25,7 @@ const Squares = ({
       numSquaresX.current = Math.ceil(canvas.width / squareSize) + 1;
       numSquaresY.current = Math.ceil(canvas.height / squareSize) + 1;
 
-      console.log("📐 Canvas resized:", {
-        width: canvas.width,
-        height: canvas.height,
-        squaresX: numSquaresX.current,
-        squaresY: numSquaresY.current,
-      });
+     
     };
 
     window.addEventListener("resize", resizeCanvas);
@@ -44,7 +39,7 @@ const Squares = ({
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
       const startY = Math.floor(gridOffset.current.y / squareSize) * squareSize;
 
-      console.log("🎨 Drawing grid. Offset:", gridOffset.current);
+      
 
       for (let x = startX; x < canvas.width + squareSize; x += squareSize) {
         for (let y = startY; y < canvas.height + squareSize; y += squareSize) {
@@ -82,7 +77,7 @@ const Squares = ({
 
     const updateAnimation = () => {
       const effectiveSpeed = Math.max(speed, 0.1);
-      console.log("🎞️ Animating with speed:", effectiveSpeed);
+
 
       switch (direction) {
         case "right":
@@ -125,12 +120,12 @@ const Squares = ({
       );
 
       hoveredSquareRef.current = { x: hoveredSquareX, y: hoveredSquareY };
-      console.log("🖱️ Hovered square:", hoveredSquareRef.current);
+    
     };
 
     const handleMouseLeave = () => {
       hoveredSquareRef.current = null;
-      console.log("🚪 Mouse left canvas");
+  
     };
 
     canvas.addEventListener("mousemove", handleMouseMove);
