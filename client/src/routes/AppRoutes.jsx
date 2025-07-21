@@ -4,12 +4,12 @@ import Home from '../pages/Home';
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 
-
-import Trade from '../pages/dashboard/Trade';
-import Watchlist from '../pages/dashboard/Watchlist';
-import Transactions from '../pages/dashboard/Transactions';
-import StockDetails from '../pages/dashboard/StockDetails';
 import ProtectedRoute from '../components/ProtectedRoute';
+
+import Trade from '../pages/dashboard/Trade'
+import Watchlist from '../pages/dashboard/Watchlist'
+import Transactions from '../pages/dashboard/Transactions'
+import StockDetails from '../pages/dashboard/StockDetails';
 import Dashboard from '../pages/dashboard/Dashbaord'
 import Portfolio from '../pages/dashboard/Portfolio';
 
