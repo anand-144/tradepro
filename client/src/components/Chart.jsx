@@ -95,7 +95,8 @@ const Chart = ({ symbol = 'AAPL' }) => {
     yaxis: {
       tooltip: { enabled: true },
       labels: {
-        formatter: val => `${currency === 'USD' ? '$' : ''}${val.toFixed(2)}${currency !== 'USD' ? ' ' + currency : ''}`,
+        formatter: val =>
+          `${currency === 'USD' ? '$' : ''}${val.toFixed(2)}${currency !== 'USD' ? ' ' + currency : ''}`,
         style: { colors: '#94a3b8', fontSize: '12px' },
       },
     },
@@ -139,13 +140,13 @@ const Chart = ({ symbol = 'AAPL' }) => {
 
   return (
     <div
-      className={`relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-slate-700/50 shadow-xl ${
-        isFullscreen ? 'fixed inset-4 z-[9999]' : ''
+      className={`relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-slate-700/50 shadow-xl transition-all duration-300 ${
+        isFullscreen ? 'fixed inset-0 z-[9999] p-4 overflow-auto' : 'w-full'
       }`}
     >
       {isFullscreen && (
         <div
-          className="fixed inset-0 bg-black/70 z-[9990]"
+          className="fixed inset-0 bg-black/70 z-[9980]"
           onClick={() => setIsFullscreen(false)}
         />
       )}
@@ -156,15 +157,18 @@ const Chart = ({ symbol = 'AAPL' }) => {
         </div>
       )}
 
-      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700/50">
-        <div className="flex items-center space-x-3">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 border-b border-slate-700/50">
+        <div className="flex items-center gap-3">
           <FiTrendingUp className="w-6 h-6 text-emerald-400" />
           <h2 className="text-xl font-bold text-white">{symbol} Chart</h2>
           <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-medium">
             {currency}
           </span>
         </div>
-        <div className="flex items-center space-x-3">
+
+        {/* Timeframe + Fullscreen Toggle */}
+        <div className="flex flex-wrap items-center gap-2 justify-between sm:justify-end">
           <div className="flex space-x-1 bg-slate-700/40 rounded p-1">
             {timeframes.map((tf) => (
               <button
@@ -190,13 +194,16 @@ const Chart = ({ symbol = 'AAPL' }) => {
         </div>
       </div>
 
-      <div className="p-4">
-        <ReactApexChart
-          options={chartOptions}
-          series={chartSeries}
-          type="candlestick"
-          height={isFullscreen ? 500 : 300}
-        />
+      {/* Chart Body */}
+      <div className="p-4 overflow-x-auto w-full">
+        <div className="w-full min-w-[300px] max-w-full">
+          <ReactApexChart
+            options={chartOptions}
+            series={chartSeries}
+            type="candlestick"
+            height={isFullscreen ? 500 : 300}
+          />
+        </div>
       </div>
     </div>
   );
