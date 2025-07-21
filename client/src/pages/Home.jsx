@@ -17,7 +17,7 @@ const Home = () => {
       <div className="relative min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center px-4 overflow-hidden">
 
         <img
-          src="../../public/HeroBg.jpeg"
+          src="/HeroBg.jpeg"
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover opacity-6 z-0"
         />
