@@ -34,7 +34,7 @@
 
 ## 📸 Screenshot
 
-![Dashboard Screenshot](https://raw.githubusercontent.com/anand-144/tradepro/client/public/Dashboard.png)
+![Dashboard Screenshot](https://raw.githubusercontent.com/anand-144/tradepro/main/client/public/Dashboard.png)
 
 
 ---
