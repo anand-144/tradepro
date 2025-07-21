@@ -22,12 +22,13 @@
 - **Context API** for auth and currency management
 
 ### Backend
-- **Node.js + Express**
+- **Node.js + Express / axios**
 - **MongoDB / Mongoose**
 - **Twelve Data** for stock data
 - **CurrencyAPI** for currency conversion
 - **In-memory caching** for efficient API usage
 - **JWT Authentication**
+- **bcryptjs** for security
 - **CORS + Cookie-based secure tokens**
 
 ---
